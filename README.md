@@ -18,7 +18,7 @@ Este projeto é uma aplicação simples em React que utiliza os conceitos de **A
 1. Clone este repositório:
 
    ```bash
-   git clone https://github.com/seu-usuario/ram-app.git
+   git clone https://github.com/nathancarlos22/ram-app.git
    cd ram-app
    ```
 
