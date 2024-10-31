@@ -43,9 +43,7 @@ O projeto segue o padrão **Atomic Design**, organizando componentes em átomos,
 ```plaintext
 src/
  ├── components/
- │    ├── atoms/          # Elementos básicos e reutilizáveis
- │    ├── molecules/      # Conjunto de componentes menores
- │    └── organisms/      # Componentes complexos com lógica interna
+ │    └── org/            # outros componentes
  ├── pages/
  │    ├── Home.js         # Página principal com a listagem de personagens
  │    └── CharacterDetails.js # Modal de detalhes do personagem
