@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { getCharacters } from '../services/api';
 import CharacterCard from '../components/org/CharacterCard';
+import CharacterDetails from './CharacterDetails';
 import styled from 'styled-components';
 
 const Grid = styled.div`
@@ -21,16 +22,26 @@ const Home = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchAllCharacters = async () => {
       try {
-        const data = await getCharacters();
-        setCharacters(data.results);
+        let page = 1;
+        let allCharacters = [];
+        let response;
+
+        // Enquanto houver próxima página, continue buscando personagens
+        do {
+          response = await getCharacters(page);
+          allCharacters = allCharacters.concat(response.results);
+          page += 1;
+        } while (response.info.next);
+
+        setCharacters(allCharacters);
       } catch (error) {
         setError('Erro ao carregar personagens.');
       }
     };
 
-    fetchData();
+    fetchAllCharacters();
   }, []);
 
   if (error) {
@@ -49,7 +60,12 @@ const Home = () => {
         ))}
       </Grid>
 
-      
+      {selectedCharacter && (
+        <CharacterDetails
+          character={selectedCharacter}
+          onClose={() => setSelectedCharacter(null)}
+        />
+      )}
     </>
   );
 };
