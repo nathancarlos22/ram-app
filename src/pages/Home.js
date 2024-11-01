@@ -10,9 +10,30 @@ const Grid = styled.div`
   gap: 16px;
   padding: 16px;
 
-  /* Responsividade */
   @media (max-width: 768px) {
     grid-template-columns: repeat(1, 1fr);
+  }
+`;
+
+const Pagination = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 16px;
+  gap: 4px; 
+`;
+
+const PageNumber = styled.button`
+  background: ${(props) => (props.active ? '#333' : '#fff')};
+  color: ${(props) => (props.active ? '#fff' : '#333')};
+  border: 1px solid #ccc;
+  padding: 8px 12px;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    background: #333;
+    color: #fff;
   }
 `;
 
@@ -20,33 +41,30 @@ const Home = () => {
   const [characters, setCharacters] = useState([]);
   const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [error, setError] = useState(null);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    const fetchAllCharacters = async () => {
+    const fetchCharacters = async () => {
       try {
-        let page = 1;
-        let allCharacters = [];
-        let response;
-
-        // Enquanto houver próxima página, continue buscando personagens
-        do {
-          response = await getCharacters(page);
-          allCharacters = allCharacters.concat(response.results);
-          page += 1;
-        } while (response.info.next);
-
-        setCharacters(allCharacters);
+        const data = await getCharacters(page);
+        setCharacters(data.results);
+        setTotalPages(data.info.pages); // Total de páginas obtido da API
       } catch (error) {
         setError('Erro ao carregar personagens.');
       }
     };
 
-    fetchAllCharacters();
-  }, []);
+    fetchCharacters();
+  }, [page]);
 
   if (error) {
     return <p>{error}</p>;
   }
+
+  const handlePageClick = (pageNumber) => {
+    setPage(pageNumber);
+  };
 
   return (
     <>
@@ -66,6 +84,18 @@ const Home = () => {
           onClose={() => setSelectedCharacter(null)}
         />
       )}
+
+      <Pagination>
+        {[...Array(totalPages)].map((_, index) => (
+          <PageNumber
+            key={index + 1}
+            active={page === index + 1}
+            onClick={() => handlePageClick(index + 1)}
+          >
+            {index + 1}
+          </PageNumber>
+        ))}
+      </Pagination>
     </>
   );
 };
